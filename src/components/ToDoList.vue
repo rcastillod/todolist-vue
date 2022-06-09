@@ -39,11 +39,12 @@ export default {
     },
     methods: {
         addTarea() {
-            this.tareas.push(this.tarea)
-            this.tarea = ''
-        },
-        removeTarea() {
-            this.checked = true
+            if ( this.tarea != '' ) {
+                this.tareas.push(this.tarea)
+                this.tarea = ''
+            } else {
+                alert('Debes ingresar una tarea para poder agregar!')
+            }
         }
     }
 }
