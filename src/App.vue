@@ -20,6 +20,7 @@ export default {
   --primary-color: 244 89% 4%;
   --secondary-color: 184 100% 34%;
   --white-color: 0 0% 100%;
+  --complete-color: 159 99% 35%;
 }
 body {
   background-image: linear-gradient(to bottom, hsl(var(--secondary-color)) , hsl(var(--primary-color)));

@@ -6,19 +6,19 @@
                 <p>Organiza tus tareas diarias</p>
             </div>
             <div class="todo__avatar">
-                <img src="https://picsum.photos/id/1012/50" alt="">
+                <img src="../assets/task.png" alt="Todo">
             </div>
             <div class="todo__input">
-                <input v-model="tarea" type="text" placeholder="Agrega aquí una nueva tarea" aria-label="Nueva tarea">
+                <input v-model="tarea" type="text" placeholder="Agrega aquí una nueva tarea" aria-label="Nueva tarea" ref="tarea">
                 <button @click="addTarea">Agregar</button>
             </div>
         </div>
         <div class="todo__content">
             <ul class="todo__list">
                 <li v-for="(tarea, index) in tareas" :key="index">
-                <label class="todo__check">
-                    <input type="checkbox">
-                    {{tarea}}
+                <label class="todo__check" :class="{ checked: tarea.checked }">
+                    <input type="checkbox" v-model="tarea.checked">
+                    <span>{{tarea.title}}</span>
                 </label>
                 </li>
             </ul>
@@ -40,8 +40,12 @@ export default {
     methods: {
         addTarea() {
             if ( this.tarea != '' ) {
-                this.tareas.push(this.tarea)
+                this.tareas.push({
+                    title: this.tarea,
+                    checked: false
+                })
                 this.tarea = ''
+                this.$refs.tarea.focus()
             } else {
                 alert('Debes ingresar una tarea para poder agregar!')
             }
@@ -122,7 +126,7 @@ export default {
     .todo__list {
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
+        gap: 0.75rem;
         list-style-type: none;
         margin: 0;
         padding: 0;
@@ -130,7 +134,7 @@ export default {
     .todo__list li {
         background-color: hsl(var(--white-color)/.2);
         border-radius: 0.525rem;
-        padding: .625rem;
+        padding: .925rem .625rem;
     }
     .todo__check {
         align-items: center;
@@ -138,9 +142,32 @@ export default {
         font-size: 1rem;
         font-weight: bold;
         line-height: 1.1;
-        display: grid;
-        grid-template-columns: 1em auto;
+        display: flex;
         gap: 0.5em;
+    }
+    .todo__check span {
+        position: relative;
+        transition: color .3s ease-in-out;
+    }
+    .todo__check span::after {
+        content: '';
+        background-color: hsl(var(--primary-color)/.2);
+        display: block;
+        grid-column: 2;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        height: .125rem;
+        width: 100%;
+        transform: scaleX(0) translateY(-50%);
+        transform-origin: 0 0;
+        transition: transform .3s ease-in-out;
+    }
+    .todo__check.checked {
+        color: hsl(var(--primary-color)/.2);
+    }
+    .todo__check.checked span::after {
+        transform: scaleX(1) translateY(-50%);
     }
     .todo__check input[type="checkbox"] {
         appearance: none;
@@ -164,8 +191,7 @@ export default {
         transition: 120ms transform ease-in-out;
     }
     .todo__check input[type="checkbox"]:checked::before,
-    .todo__check input[type="checkbox"]:hover::before,
-    .todo__check input[type="checkbox"]:focus::before {
+    .todo__check input[type="checkbox"]:hover::before {
         transform: scale(1);
     }
     .todo__check input[type="checkbox"]:hover::before,
