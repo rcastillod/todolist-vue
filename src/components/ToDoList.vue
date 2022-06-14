@@ -1,127 +1,53 @@
 <template>
-    <div class="todo-wrapper">
-        <div class="todo__header">
-            <div class="todo__title">
-                <h3>Daily Todo List</h3>
-                <p>Organiza tus tareas diarias</p>
-            </div>
-            <div class="todo__avatar">
-                <img src="../assets/task.png" alt="Todo">
-            </div>
-            <div class="todo__input">
-                <input v-model="tarea" type="text" placeholder="Agrega aquí una nueva tarea" aria-label="Nueva tarea" ref="tarea">
-                <button @click="addTarea">Agregar</button>
-            </div>
-        </div>
-        <div class="todo__content">
-            <ul class="todo__list">
-                <li v-for="(tarea, index) in tareas" :key="index">
+    <div class="todo__content">
+        <p v-if="this.tareas.length == 0" class="todo__notask">Felicitaciones!! No tiene tareas pendientes por hacer &#128079;</p>
+        <ul class="todo__list">
+            <li v-for="(tarea, index) in tareas" :key="index">
                 <label class="todo__check" :class="{ checked: tarea.checked }">
                     <input type="checkbox" v-model="tarea.checked">
                     <span>{{tarea.title}}</span>
                 </label>
-                </li>
-            </ul>
-        </div>
+                <div class="todo__delete" @click="remove(index)">
+                    <img width="22" src="../assets/trash.png" alt="Eliminar">
+                    <span>Eliminar</span>
+                </div>
+            </li>
+        </ul>
     </div>
 </template>
 
 <script>
 export default {
     name: 'component-todolist',
-    // props: {},
+    props: {
+        tareas: {
+            type: Array,
+            required: true
+        },
+        checked: {
+            type: Boolean,
+            required: true
+        }
+    },
     data: function(){
         return {
-            tarea: '',
-            tareas: [],
-            checked: false
+
         }
     },
     methods: {
-        addTarea() {
-            if ( this.tarea != '' ) {
-                this.tareas.push({
-                    title: this.tarea,
-                    checked: false
-                })
-                this.tarea = ''
-                this.$refs.tarea.focus()
-            } else {
-                alert('Debes ingresar una tarea para poder agregar!')
-            }
+        remove(id) {
+            this.$emit('remove', id)
         }
     }
 }
 </script>
 
 <style scoped>
-    .todo-wrapper {
-        background-color: hsl(var(--white-color)/.2);
-        backdrop-filter: blur(10px);
-        border-radius: 1.25rem;
-        margin-inline: auto;
-        padding: 1.875rem;
-        width: min(100% - 2rem, 25rem);
-    }
-    .todo__header {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        row-gap: .9375rem;
-    }
-    .todo__title > * {
-        margin: 0;
-    }
-    .todo__title h3 {
-        font-size: 1.75rem;
-        font-weight: 900;
-    }
-    .todo__avatar {
-        border: 2px solid hsl(var(--white-color));
-        border-radius: 50%;
-        height: 3.125rem;
-        overflow: hidden;
-        width: 3.125rem;
-    }
-    .todo__avatar img {
-        object-fit: cover;
-        height: 100%;
-        width: 100%;
-    }
-    .todo__input {
-        display: flex;
-        flex-grow: 1;
-        gap: 1.25rem;
-    }
-    .todo__input input {
-        background-color: transparent;
-        border: 0;
-        border-bottom: 1px solid hsl(var(--white-color));
-        color: hsl(var(--white-color));
-        flex-grow: 1;
-        padding: 0.625rem;
-    }
-    .todo__input input:focus {
-        outline: none;
-    }
-    .todo__input input::placeholder {
-        color: hsl(var(--white-color));
-    }
-    .todo__input button {
-        background-color: hsl(var(--primary-color));
-        border: 0;
-        border-radius: .3125rem;
-        color: hsl(var(--white-color));
-        cursor: pointer;
-        padding: .625rem;
-        transition: background .3s ease-in-out;
-    }
-    .todo__input button:hover,
-    .todo__input button:focus {
-        background-color: hsl(var(--secondary-color));
-    }
     .todo__content {
         margin-block-start: 1.25rem;
+    }
+    .todo__notask {
+        font-size: .875rem;
     }
     .todo__list {
         display: flex;
@@ -135,6 +61,8 @@ export default {
         background-color: hsl(var(--white-color)/.2);
         border-radius: 0.525rem;
         padding: .925rem .625rem;
+        overflow: hidden;
+        position: relative;
     }
     .todo__check {
         align-items: center;
@@ -200,5 +128,38 @@ export default {
     }
     .todo__list li p {
         margin: 0;
+    }
+    .todo__delete {
+        align-items: center;
+        background-color: hsl(var(--white-color));
+        border-radius: 0.525rem;
+        cursor: pointer;
+        display: flex;
+        gap: .625rem;
+        height: 100%;
+        top: 50%;
+        right: 0;
+        padding-inline: .625rem;
+        position: absolute;
+        transform: translate(calc(100% + 1px), -50%);
+        transition: transform 650ms cubic-bezier(0.79,0.14,0.15,0.86);
+        z-index: 2;
+    }
+    .todo__delete > span {
+        color: hsl(var(--remove-color));
+        font-weight: 700;
+        font-size: .875rem;
+        transform: translateX(.625rem);
+        transition: transform 650ms cubic-bezier(0.65,0.05,0.36,1);
+    }
+    .todo__list li:hover .todo__delete {
+        transform: translate(60%, -50%);
+    }
+    .todo__delete:hover {
+        transform: translate(0, -50%) !important;
+    }
+    .todo__delete:hover > span {
+        opacity: 1;
+        transform: translateX(0);
     }
 </style>
